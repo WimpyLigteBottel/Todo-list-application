@@ -53,7 +53,7 @@ internal class TaskControllerContractTest {
     @Test
     fun `create custom request with message`() {
         val forEntity = restTemplate.postForEntity(
-            buildUrl("/create"),
+            buildUrl("/task"),
             CreateTaskRequest("marco"),
             TaskModel::class.java
         )
@@ -64,14 +64,32 @@ internal class TaskControllerContractTest {
 
     @Test
     fun `findall all task given 3 exists`() {
-        restTemplate.postForEntity(buildUrl("/create"), CreateTaskRequest("marco1"), TaskModel::class.java)
-        restTemplate.postForEntity(buildUrl("/create"), CreateTaskRequest("marco2"), TaskModel::class.java)
+        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco1"), TaskModel::class.java)
+        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
 
-        val findAllTask = restTemplate.getForEntity(buildUrl("/find"), String::class.java)
+        val findAllTask = restTemplate.getForEntity(buildUrl("/task"), String::class.java)
         assertThat(findAllTask.statusCode.is2xxSuccessful).isTrue
         assertThat(findAllTask.body).contains("marco1")
         assertThat(findAllTask.body).contains("marco2")
 
+    }
+
+
+    @Test
+    fun `create a task and update it`() {
+        val response = restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("to be changed"), TaskModel::class.java).body
+        restTemplate.put(buildUrl("/task"), TaskModel(response!!.id, "changed"), TaskModel::class.java)
+
+        val findAllTask = restTemplate.getForEntity(buildUrl("/task/${response.id}"), String::class.java)
+        assertThat(findAllTask.statusCode.is2xxSuccessful).isTrue
+        assertThat(findAllTask.body).contains("changed")
+
+    }
+
+    @Test
+    fun `finding task with specific id expect notfound`() {
+        val findTask = restTemplate.getForEntity(buildUrl("/task/99999999999999999"), TaskModel::class.java)
+        assertThat(findTask.statusCode.value()).isEqualTo(404)
     }
 
 }
