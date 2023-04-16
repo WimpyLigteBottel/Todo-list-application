@@ -8,4 +8,5 @@ data class TaskModel(
     @JsonProperty("message") val message: String,
     @JsonProperty("created") val created: OffsetDateTime? = null,
     @JsonProperty("updated") val updated: OffsetDateTime? = null,
+    @JsonProperty("completed") val completed: Boolean? = null,
 )

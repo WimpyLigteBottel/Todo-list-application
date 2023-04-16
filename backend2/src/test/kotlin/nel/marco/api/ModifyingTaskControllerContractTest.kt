@@ -78,6 +78,25 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
+    fun `create a task and update it as completed`() {
+        val response = restTemplate.postForEntity(
+            buildUrl("/task"),
+            CreateTaskRequest("to be changed"),
+            TaskModel::class.java
+        ).body
+        restTemplate.put(
+            buildUrl("/task"),
+            TaskModel(response!!.id, "changed", null, null, true),
+            TaskModel::class.java
+        )
+
+        val findAllTask = restTemplate.getForEntity(buildUrl("/task/${response.id}"), String::class.java)
+        assertThat(findAllTask.statusCode.is2xxSuccessful).isTrue
+        assertThat(findAllTask.body).contains("\"completed\":true")
+
+    }
+
+    @Test
     fun `deleting task that does not exist`() {
         restTemplate.delete(buildUrl("/task/99999999999999999"))
     }

@@ -22,8 +22,10 @@ class FindingTaskController(
         @RequestParam(required = false) message: String? = null,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(required = false) isBefore: LocalDate? = null,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(required = false) isAfter: LocalDate? = null,
+        @RequestParam(required = false) completed: Boolean? = null,
     ): List<TaskModel> {
-        val findAll = taskService.findAll(ids, message, isBefore = isBefore, isAfter = isAfter)
+        val findAll =
+            taskService.findAll(ids, message, isBefore = isBefore, isAfter = isAfter, completed = completed)
         return findAll.map { it.mapToModel() }
     }
 

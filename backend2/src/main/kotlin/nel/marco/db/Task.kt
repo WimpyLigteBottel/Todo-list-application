@@ -23,5 +23,8 @@ data class Task(
 
     @UpdateTimestamp
     @Column(name = "updated", nullable = false)
-    var updated: OffsetDateTime? = OffsetDateTime.now(ZoneOffset.UTC)
+    var updated: OffsetDateTime? = OffsetDateTime.now(ZoneOffset.UTC),
+
+    @Column(nullable = false)
+    var completed: Boolean? = false,
 )
