@@ -15,7 +15,7 @@ class TaskService(
     @Transactional
     fun createTask(request: CreateTaskRequest): TaskModel {
 
-        val task = Task(message = request.message)
+        val task = Task(message = request.message!!)
         val save = taskJpaRepository.save(task)
 
         return TaskModel(id = save.id, message = save.message)
