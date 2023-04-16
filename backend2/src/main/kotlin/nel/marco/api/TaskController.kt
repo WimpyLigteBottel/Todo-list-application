@@ -4,7 +4,6 @@ import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task
 import nel.marco.service.TaskService
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.ALL_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.validation.annotation.Validated
@@ -18,7 +17,7 @@ import java.time.OffsetDateTime
 class TaskController(
     private val taskService: TaskService
 ) {
-    @GetMapping("/create")
+    @GetMapping("/create", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun createTask(): TaskModel {
         return taskService.createTask(CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now()))
     }
@@ -28,7 +27,7 @@ class TaskController(
         return taskService.createTask(createTaskRequest)
     }
 
-    @GetMapping("/find")
+    @GetMapping("/find", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun findAllTasks(): List<Task> {
         return taskService.findAll()
     }
