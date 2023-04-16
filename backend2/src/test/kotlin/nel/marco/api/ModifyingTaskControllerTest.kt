@@ -16,17 +16,17 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest
 @Rollback
 @Transactional
-internal class TaskControllerTest {
+internal class ModifyingTaskControllerTest {
 
     @Autowired
     lateinit var taskJpaRepository: TaskJpaRepository
 
     @Autowired
-    lateinit var taskController: TaskController
+    lateinit var modifyingTaskController: ModifyingTaskController
 
     @Test
     fun `create default task and expect task to be in db`() {
-        taskController.createTask()
+        modifyingTaskController.createTask()
 
         assertThat(taskJpaRepository.findAll()).isNotEmpty
     }
@@ -34,7 +34,7 @@ internal class TaskControllerTest {
     @Test
     fun `testCreateTask with custom message`() {
         val customMessage = "Marco!!!!!"
-        taskController.createTask(CreateTaskRequest(customMessage))
+        modifyingTaskController.createTask(CreateTaskRequest(customMessage))
 
         val tasks = taskJpaRepository.findAll()
         val task = tasks.find { it.message == customMessage }
@@ -43,35 +43,17 @@ internal class TaskControllerTest {
     }
 
     @Test
-    fun `findall all task expect empty`() {
-        val actual = taskController.findAllTasks()
-
-        assertThat(actual).isEmpty()
-    }
-
-    @Test
-    fun `findall all but 3 tasks exist task expect 3 tasks back`() {
-        taskJpaRepository.save(Task())
-        taskJpaRepository.save(Task())
-        taskJpaRepository.save(Task())
-
-        val actual = taskController.findAllTasks()
-
-        assertThat(actual.size).isEqualTo(3)
-    }
-
-    @Test
     fun `delete saved task`() {
         val save = taskJpaRepository.save(Task())
 
-        val actual = taskController.deleteTask(save.id)
+        val actual = modifyingTaskController.deleteTask(save.id)
 
         assertThat(actual.statusCode.is2xxSuccessful).isTrue()
     }
 
     @Test
     fun `delete task that does not exist`() {
-        val actual = taskController.deleteTask(999999999)
+        val actual = modifyingTaskController.deleteTask(999999999)
 
         assertThat(actual.statusCode.is2xxSuccessful).isTrue
     }
@@ -80,15 +62,15 @@ internal class TaskControllerTest {
     @Test
     fun `update task that does not exist expect Exception`() {
         assertThrows<RuntimeException> {
-            taskController.updateTask(TaskModel(id = 1, message = "failure"))
+            modifyingTaskController.updateTask(TaskModel(id = 1, message = "failure"))
         }
     }
 
     @Test
     fun `update task that exist`() {
-        taskController.createTask()
-        val createTask = taskController.createTask()
-        val updatedTask = taskController.updateTask(TaskModel(id = createTask.id!!, message = "changed"))
+        modifyingTaskController.createTask()
+        val createTask = modifyingTaskController.createTask()
+        val updatedTask = modifyingTaskController.updateTask(TaskModel(id = createTask.id!!, message = "changed"))
 
         assertThat(updatedTask.id).isEqualTo(createTask.id)
         assertThat(updatedTask.message).isEqualTo("changed")
@@ -97,27 +79,10 @@ internal class TaskControllerTest {
 
     @Test
     fun `delete task that exist`() {
-        val createTask = taskController.createTask()
-        val deleteTask = taskController.deleteTask(createTask.id!!)
+        val createTask = modifyingTaskController.createTask()
+        val deleteTask = modifyingTaskController.deleteTask(createTask.id!!)
 
         assertThat(deleteTask.statusCode.is2xxSuccessful).isTrue()
     }
 
-
-    @Test
-    fun `able to find task that exist`() {
-        val createTask = taskController.createTask()
-        val found = taskController.findTask(createTask.id!!)
-
-        assertThat(found.statusCode.is2xxSuccessful).isTrue
-        assertThat(found.body!!.id).isEqualTo(createTask.id)
-    }
-
-    @Test
-    fun `expect empty result if task does not exist`() {
-        val found = taskController.findTask(999999)
-
-        assertThat(found.statusCode.is4xxClientError).isTrue
-        assertThat(found.statusCode.value()).isEqualTo(404)
-    }
 }
