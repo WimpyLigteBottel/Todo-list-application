@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
+@RequestMapping(path = ["/"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
 class TaskController(
     private val taskService: TaskService
 ) {
-    @GetMapping("/create", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    @GetMapping("/create")
     fun createTask(): TaskModel {
         return taskService.createTask(CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now()))
     }
 
-    @PostMapping("/task", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    @PostMapping("/task")
     fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskModel {
         return taskService.createTask(createTaskRequest)
     }
@@ -30,12 +31,12 @@ class TaskController(
         return taskService.updateTask(taskToUpdate)
     }
 
-    @GetMapping("/task", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    @GetMapping("/task")
     fun findAllTasks(): List<Task> {
         return taskService.findAll()
     }
 
-    @GetMapping("/task/{id}", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    @GetMapping("/task/{id}")
     fun findTask(@PathVariable id: Long): ResponseEntity<TaskModel> {
         val find = taskService.find(id)
 
@@ -43,5 +44,11 @@ class TaskController(
             return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(find)
+    }
+
+    @DeleteMapping("/task/{id}")
+    fun deleteTask(@PathVariable id: Long): ResponseEntity<Any?> {
+        taskService.delete(id)
+        return ResponseEntity.noContent().build()
     }
 }

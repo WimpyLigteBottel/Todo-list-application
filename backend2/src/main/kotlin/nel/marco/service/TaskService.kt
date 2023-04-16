@@ -4,6 +4,8 @@ import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
+import nel.marco.db.mapToModel
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,28 +16,26 @@ class TaskService(
     private val taskJpaRepository: TaskJpaRepository,
 ) {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Transactional
     fun createTask(request: CreateTaskRequest): TaskModel {
-
         val task = Task(message = request.message!!)
         val save = taskJpaRepository.save(task)
 
-        return mapToModel(save)
+        logger.info("task created [id=${save.id}]")
+
+        return save.mapToModel()
     }
 
     fun findAll(): List<Task> {
-
-
         return taskJpaRepository.findAll().toList()
     }
 
     fun find(id: Long): TaskModel? {
-        val response = taskJpaRepository.findById(id).getOrNull()
+        val response = taskJpaRepository.findById(id).getOrNull() ?: return null
 
-        if(response == null)
-            return null
-
-        return mapToModel(response)
+        return response.mapToModel()
     }
 
 
@@ -52,13 +52,14 @@ class TaskService(
 
         val saved = taskJpaRepository.save(task)
 
-        return mapToModel(saved)
+        logger.info("task updated [id=${taskToUpdate.id}]")
+
+        return saved.mapToModel()
     }
 
-    fun mapToModel(task: Task): TaskModel {
-        return TaskModel(
-            id = task.id,
-            message = task.message
-        )
+    @Transactional
+    fun delete(id: Long) {
+        taskJpaRepository.deleteById(id)
+        logger.info("task deleted [id=$id]")
     }
 }

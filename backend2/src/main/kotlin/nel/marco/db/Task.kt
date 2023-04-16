@@ -1,6 +1,7 @@
 package nel.marco.db
 
 import jakarta.persistence.*
+import nel.marco.api.v1.model.TaskModel
 
 @Entity
 @Table
@@ -12,4 +13,9 @@ data class Task(
 
     @Column(nullable = false)
     var message: String = "todo"
+)
+
+fun Task.mapToModel(): TaskModel = TaskModel(
+    id = this.id,
+    message = this.message
 )

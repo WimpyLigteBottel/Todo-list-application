@@ -16,16 +16,20 @@ As a user, I want to be able to search for a specific task by keyword so that I 
 
 Backend User Stories:
 
-As a developer, I want to be able to store tasks in a database so that users' tasks persist across sessions.
+As a developer, I want to be able to store tasks in a database so that users' tasks persist across sessions. (DONE)_
 
-As a developer, I want to be able to retrieve a list of tasks from the database so that I can send it to the frontend. (get tasks)
+As a developer, I want to be able to create a new task in the database when a user adds a new task in the frontend.
 
-As a developer, I want to be able to create a new task in the database when a user adds a new task in the frontend. (adding todo's)
+As a developer, I want to be able to update a task in the database when a user edits a task in the frontend.
 
-As a developer, I want to be able to update a task in the database when a user edits a task in the frontend. (updating tasks)
+As a developer, I want to be able to delete a task from the database when a user deletes a task in the frontend.
 
-As a developer, I want to be able to delete a task from the database when a user deletes a task in the frontend. (removing tasks)
+As a developer, I want to be able to retrieve a list of tasks from the database so that I can send it to the frontend.
 
 As a developer, I want to be able to filter the list of tasks based on completed or uncompleted status so that I can send the filtered list to the frontend.
+
+As a developer, I want to be able to search the list of tasks based on a keyword so that I can send the filtered list to the frontend.
+
+As a developer, I want to add authentication to the backend so that users can only access their own tasks.
 
 These user stories should help you focus on what you need to implement in both the frontend and backend of the application.

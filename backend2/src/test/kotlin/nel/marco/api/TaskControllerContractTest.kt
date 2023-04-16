@@ -77,7 +77,11 @@ internal class TaskControllerContractTest {
 
     @Test
     fun `create a task and update it`() {
-        val response = restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("to be changed"), TaskModel::class.java).body
+        val response = restTemplate.postForEntity(
+            buildUrl("/task"),
+            CreateTaskRequest("to be changed"),
+            TaskModel::class.java
+        ).body
         restTemplate.put(buildUrl("/task"), TaskModel(response!!.id, "changed"), TaskModel::class.java)
 
         val findAllTask = restTemplate.getForEntity(buildUrl("/task/${response.id}"), String::class.java)
@@ -87,9 +91,22 @@ internal class TaskControllerContractTest {
     }
 
     @Test
-    fun `finding task with specific id expect notfound`() {
+    fun `finding task with specific id expect not found`() {
         val findTask = restTemplate.getForEntity(buildUrl("/task/99999999999999999"), TaskModel::class.java)
         assertThat(findTask.statusCode.value()).isEqualTo(404)
+    }
+
+
+    @Test
+    fun `deleting task that does not exist`() {
+        restTemplate.delete(buildUrl("/task/99999999999999999"))
+    }
+
+    @Test
+    fun `deleting task that does expist`() {
+        val entity = restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
+
+        restTemplate.delete(buildUrl("/task/${entity.body.id}"))
     }
 
 }
