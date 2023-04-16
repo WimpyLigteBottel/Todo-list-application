@@ -1,9 +1,9 @@
 package nel.marco.service
 
 import nel.marco.api.v1.model.CreateTaskRequest
-import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
+import nel.marco.service.dto.TaskDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -56,7 +56,7 @@ internal class TaskServiceTest {
     fun `can't update task which does not exist`() {
         whenever(taskJpaRepository.findByIdOrNull(1)).thenReturn(null)
         assertThrows<RuntimeException> {
-            taskService.updateTask(TaskModel(1, "test"))
+            taskService.updateTask(TaskDto(1, "test"))
         }
     }
 
@@ -64,14 +64,14 @@ internal class TaskServiceTest {
     fun `task does not exist`() {
         whenever(taskJpaRepository.findById(1)).thenReturn(Optional.empty())
         assertThrows<RuntimeException> {
-            taskService.updateTask(TaskModel(1, "test"))
+            taskService.updateTask(TaskDto(1, "test"))
         }
     }
 
     @Test
     fun `can't update task with empty message`() {
         assertThrows<RuntimeException> {
-            taskService.updateTask(TaskModel(1, ""))
+            taskService.updateTask(TaskDto(1, ""))
         }
     }
 
@@ -82,7 +82,7 @@ internal class TaskServiceTest {
         whenever(taskJpaRepository.findById(1)).thenReturn(Optional.of(task))
         whenever(taskJpaRepository.save(anyOrNull())).thenReturn(Task(1, "CHANGED"))
 
-        taskService.updateTask(TaskModel(1, "CHANGED"))
+        taskService.updateTask(TaskDto(1, "CHANGED"))
 
         verify(taskJpaRepository).save(argThat { it.id == 1L })
         verify(taskJpaRepository).save(argThat { it.message == "CHANGED" })
