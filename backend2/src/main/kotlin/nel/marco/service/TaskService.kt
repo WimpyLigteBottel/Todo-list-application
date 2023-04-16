@@ -4,12 +4,14 @@ import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
 import nel.marco.service.dto.TaskDto
+import nel.marco.db.TaskSpecification
 import nel.marco.service.dto.mapToDomain
 import nel.marco.service.dto.mapToEntity
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -19,8 +21,17 @@ class TaskService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun findAll(): List<TaskDto> {
-        return taskJpaRepository.findAll().map { it.mapToDomain() }.toList()
+    fun findAll(
+        ids: List<Long>? = null,
+        message: String? = null,
+        isBefore: LocalDate? = null,
+        isAfter: LocalDate? = null
+    ): List<TaskDto> {
+        return taskJpaRepository.findAll(
+            TaskSpecification(ids = ids, message = message, isBefore = isBefore, isAfter = isAfter)
+        ).map {
+            it.mapToDomain()
+        }.toList()
     }
 
     fun find(id: Long): TaskDto? {
@@ -45,10 +56,13 @@ class TaskService(
             throw RuntimeException("Cant update task with empty message")
         }
 
-        taskJpaRepository.findByIdOrNull(toUpdateTask.id)
-            ?: throw RuntimeException("Task does not exist [id=${toUpdateTask.id}]")
+        val task = (taskJpaRepository.findByIdOrNull(toUpdateTask.id)
+            ?: throw RuntimeException("Task does not exist [id=${toUpdateTask.id}]"))
 
-        val saved = taskJpaRepository.save(toUpdateTask.mapToEntity())
+        task.id = toUpdateTask.id!!
+        task.message = toUpdateTask.message
+
+        val saved = taskJpaRepository.save(task)
 
         logger.info("task updated [id=${toUpdateTask.id}]")
 

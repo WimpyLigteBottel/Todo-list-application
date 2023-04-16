@@ -15,7 +15,7 @@ import org.springframework.core.env.Environment
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class TaskControllerContractTest {
+internal class ModifyingTaskControllerContractTest {
 
     @Autowired
     lateinit var taskJpaRepository: TaskJpaRepository
@@ -63,19 +63,6 @@ internal class TaskControllerContractTest {
     }
 
     @Test
-    fun `findall all task given 3 exists`() {
-        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco1"), TaskModel::class.java)
-        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
-
-        val findAllTask = restTemplate.getForEntity(buildUrl("/task"), String::class.java)
-        assertThat(findAllTask.statusCode.is2xxSuccessful).isTrue
-        assertThat(findAllTask.body).contains("marco1")
-        assertThat(findAllTask.body).contains("marco2")
-
-    }
-
-
-    @Test
     fun `create a task and update it`() {
         val response = restTemplate.postForEntity(
             buildUrl("/task"),
@@ -89,13 +76,6 @@ internal class TaskControllerContractTest {
         assertThat(findAllTask.body).contains("changed")
 
     }
-
-    @Test
-    fun `finding task with specific id expect not found`() {
-        val findTask = restTemplate.getForEntity(buildUrl("/task/99999999999999999"), TaskModel::class.java)
-        assertThat(findTask.statusCode.value()).isEqualTo(404)
-    }
-
 
     @Test
     fun `deleting task that does not exist`() {
