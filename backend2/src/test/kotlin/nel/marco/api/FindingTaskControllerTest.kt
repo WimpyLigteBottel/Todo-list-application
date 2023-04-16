@@ -108,6 +108,29 @@ internal class FindingTaskControllerTest {
         assertThat(actual.size).isEqualTo(3)
     }
 
+
+    @Test
+    fun `findall all none completed task expect 3`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(completed = false)
+
+        assertThat(actual.size).isEqualTo(3)
+    }
+
+    @Test
+    fun `findall all completed task expect 1`() {
+        taskJpaRepository.save(Task(message = "marco", completed = true))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(completed = true)
+
+        assertThat(actual.size).isEqualTo(1)
+    }
+
     @Test
     fun `findall all message that is created a between dates`() {
         taskJpaRepository.save(Task(message = "marco"))

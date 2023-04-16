@@ -12,16 +12,27 @@ class TaskSpecification(
     val message: String? = null,
     val isBefore: LocalDate? = null,
     val isAfter: LocalDate? = null,
+    val completed: Boolean? = null,
 ) : Specification<Task> {
 
     override fun toPredicate(root: Root<Task>, query: CriteriaQuery<*>, cb: CriteriaBuilder): Predicate {
         val predicates: MutableList<Predicate> = mutableListOf()
 
         addIdFilters(predicates, root)
+        addIsCompleted(predicates, cb, root)
         addMessageFilter(predicates, cb, root)
         addDateFilters(predicates, cb, root)
 
         return cb.and(*predicates.toTypedArray())
+    }
+
+    private fun addIsCompleted(
+        predicates: MutableList<Predicate>,
+        cb: CriteriaBuilder,
+        root: Root<Task>
+    ) {
+        if (completed != null)
+            predicates.add(cb.equal(root.get<Boolean>("completed"), completed))
     }
 
     private fun addIdFilters(

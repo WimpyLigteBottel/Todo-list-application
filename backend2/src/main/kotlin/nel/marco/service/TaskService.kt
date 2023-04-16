@@ -3,10 +3,9 @@ package nel.marco.service
 import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
-import nel.marco.service.dto.TaskDto
 import nel.marco.db.TaskSpecification
+import nel.marco.service.dto.TaskDto
 import nel.marco.service.dto.mapToDomain
-import nel.marco.service.dto.mapToEntity
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -25,10 +24,17 @@ class TaskService(
         ids: List<Long>? = null,
         message: String? = null,
         isBefore: LocalDate? = null,
-        isAfter: LocalDate? = null
+        isAfter: LocalDate? = null,
+        completed: Boolean? = null,
     ): List<TaskDto> {
         return taskJpaRepository.findAll(
-            TaskSpecification(ids = ids, message = message, isBefore = isBefore, isAfter = isAfter)
+            TaskSpecification(
+                ids = ids,
+                message = message,
+                isBefore = isBefore,
+                isAfter = isAfter,
+                completed = completed
+            )
         ).map {
             it.mapToDomain()
         }.toList()
@@ -51,20 +57,21 @@ class TaskService(
     }
 
     @Transactional
-    fun updateTask(toUpdateTask: TaskDto): TaskDto {
-        if (toUpdateTask.message == null) {
+    fun updateTask(dto: TaskDto): TaskDto {
+        if (dto.message == null) {
             throw RuntimeException("Cant update task with empty message")
         }
 
-        val task = (taskJpaRepository.findByIdOrNull(toUpdateTask.id)
-            ?: throw RuntimeException("Task does not exist [id=${toUpdateTask.id}]"))
+        val task = (taskJpaRepository.findByIdOrNull(dto.id)
+            ?: throw RuntimeException("Task does not exist [id=${dto.id}]"))
 
-        task.id = toUpdateTask.id!!
-        task.message = toUpdateTask.message
+        task.id = dto.id!!
+        task.message = dto.message
+        task.completed = dto.completed ?: false
 
         val saved = taskJpaRepository.save(task)
 
-        logger.info("task updated [id=${toUpdateTask.id}]")
+        logger.info("task updated [id=${dto.id}]")
 
         return saved.mapToDomain()
     }

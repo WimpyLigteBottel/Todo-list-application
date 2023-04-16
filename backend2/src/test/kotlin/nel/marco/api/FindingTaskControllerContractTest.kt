@@ -99,6 +99,18 @@ internal class FindingTaskControllerContractTest {
         assertThat(findAllTask.body).contains("marco2")
     }
 
+    @Test
+    fun `findall all tasks that is completed`() {
+        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco1"), TaskModel::class.java)
+        restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
+
+        val findAllTask =
+            restTemplate.getForEntity(buildUrl("/task?isCompleted=false"), String::class.java)
+        assertThat(findAllTask.statusCode.is2xxSuccessful).isTrue
+        assertThat(findAllTask.body).contains("marco1")
+        assertThat(findAllTask.body).contains("marco2")
+    }
+
 
     @Test
     fun `findall all tasks by ids`() {
