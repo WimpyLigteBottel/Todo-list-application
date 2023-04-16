@@ -1,11 +1,13 @@
 package nel.marco.service
 
 import nel.marco.api.v1.model.CreateTaskRequest
+import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -13,6 +15,8 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.whenever
+import org.springframework.data.repository.findByIdOrNull
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 internal class TaskServiceTest {
@@ -47,4 +51,43 @@ internal class TaskServiceTest {
         assertThat(tasks).isNotEmpty
         assertThat(tasks.size).isEqualTo(3)
     }
+
+    @Test
+    fun `can't update task which does not exist`() {
+        whenever(taskJpaRepository.findByIdOrNull(1)).thenReturn(null)
+        assertThrows<RuntimeException> {
+            taskService.updateTask(TaskModel(1, "test"))
+        }
+    }
+
+    @Test
+    fun `task does not exist`() {
+        whenever(taskJpaRepository.findById(1)).thenReturn(Optional.empty())
+        assertThrows<RuntimeException> {
+            taskService.updateTask(TaskModel(1, "test"))
+        }
+    }
+
+    @Test
+    fun `can't update task with empty message`() {
+        assertThrows<RuntimeException> {
+            taskService.updateTask(TaskModel(1, ""))
+        }
+    }
+
+
+    @Test
+    fun `if task exist and update is called expect field to be update`() {
+        val task = Task(1, "HELLO")
+        whenever(taskJpaRepository.findById(1)).thenReturn(Optional.of(task))
+        whenever(taskJpaRepository.save(anyOrNull())).thenReturn(Task(1, "CHANGED"))
+
+        taskService.updateTask(TaskModel(1, "CHANGED"))
+
+        verify(taskJpaRepository).save(argThat { it.id == 1L })
+        verify(taskJpaRepository).save(argThat { it.message == "CHANGED" })
+
+    }
+
+
 }
