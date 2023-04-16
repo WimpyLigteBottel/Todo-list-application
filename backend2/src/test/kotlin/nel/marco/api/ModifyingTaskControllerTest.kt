@@ -70,7 +70,7 @@ internal class ModifyingTaskControllerTest {
     fun `update task that exist`() {
         modifyingTaskController.createTask()
         val createTask = modifyingTaskController.createTask()
-        val updatedTask = modifyingTaskController.updateTask(TaskModel(id = createTask.id!!, message = "changed"))
+        val updatedTask = modifyingTaskController.updateTask(TaskModel(id = createTask.id, message = "changed"))
 
         assertThat(updatedTask.id).isEqualTo(createTask.id)
         assertThat(updatedTask.message).isEqualTo("changed")
@@ -80,7 +80,7 @@ internal class ModifyingTaskControllerTest {
     @Test
     fun `delete task that exist`() {
         val createTask = modifyingTaskController.createTask()
-        val deleteTask = modifyingTaskController.deleteTask(createTask.id!!)
+        val deleteTask = modifyingTaskController.deleteTask(createTask.id)
 
         assertThat(deleteTask.statusCode.is2xxSuccessful).isTrue()
     }

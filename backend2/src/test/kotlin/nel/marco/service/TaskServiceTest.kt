@@ -4,6 +4,7 @@ import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
 import nel.marco.service.dto.TaskDto
+import nel.marco.db.TaskSpecification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -45,7 +46,11 @@ internal class TaskServiceTest {
 
     @Test
     fun `findAll tasks given 3 exist expect 3 tasks back`() {
-        whenever(taskJpaRepository.findAll()).thenReturn(listOf(Task(), Task(), Task()))
+        whenever(
+            taskJpaRepository.findAll(
+                any(TaskSpecification::class.java)
+            )
+        ).thenReturn(listOf(Task(), Task(), Task()))
         val tasks = taskService.findAll()
 
         assertThat(tasks).isNotEmpty

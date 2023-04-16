@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @SpringBootTest
 @Rollback
@@ -35,6 +36,88 @@ internal class FindingTaskControllerTest {
         taskJpaRepository.save(Task())
 
         val actual = findingTaskController.findAllTasks()
+
+        assertThat(actual.size).isEqualTo(3)
+    }
+
+
+    @Test
+    fun `findall all message that contains marco`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(message = "marco")
+
+        assertThat(actual.size).isEqualTo(2)
+    }
+
+    @Test
+    fun `findall all message that contains ids 1,2,3`() {
+        val task1 = taskJpaRepository.save(Task(message = "marco"))
+        val task2 = taskJpaRepository.save(Task(message = "1234"))
+        val task3 = taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(ids = listOf(task1.id, task2.id, task3.id))
+
+        assertThat(actual.size).isEqualTo(3)
+    }
+
+    @Test
+    fun `findall all message that is created before 3 days ago`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(isBefore = LocalDate.now().minusDays(3))
+
+        assertThat(actual.size).isEqualTo(0)
+    }
+
+    @Test
+    fun `findall all message that is created before 3 days in the future`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(isBefore = LocalDate.now().plusDays(3))
+
+        assertThat(actual.size).isEqualTo(3)
+    }
+
+
+    @Test
+    fun `findall all message that is created after 3 days in the future`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(isAfter = LocalDate.now().plusDays(3))
+
+        assertThat(actual.size).isEqualTo(0)
+    }
+
+    @Test
+    fun `findall all message that is created after 3 days in the past`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(isAfter = LocalDate.now().minusDays(3))
+
+        assertThat(actual.size).isEqualTo(3)
+    }
+
+    @Test
+    fun `findall all message that is created a between dates`() {
+        taskJpaRepository.save(Task(message = "marco"))
+        taskJpaRepository.save(Task(message = "1234"))
+        taskJpaRepository.save(Task(message = "marco"))
+
+        val actual = findingTaskController.findAllTasks(
+            isAfter = LocalDate.now().minusDays(3),
+            isBefore = LocalDate.now().plusDays(3)
+        )
 
         assertThat(actual.size).isEqualTo(3)
     }
