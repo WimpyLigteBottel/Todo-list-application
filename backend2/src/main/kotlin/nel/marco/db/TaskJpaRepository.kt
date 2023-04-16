@@ -1,7 +1,7 @@
 package nel.marco.db
 
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TaskJpaRepository : CrudRepository<Task, Long>
+interface TaskJpaRepository : JpaRepository<Task, Long>

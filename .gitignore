@@ -1,2 +1,3 @@
-/backend2/.idea/
-/backend2/.jpb/
+.jpb
+.idea
+/target

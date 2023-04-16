@@ -1,24 +1,34 @@
 package nel.marco.api
 
+import nel.marco.api.v1.model.CreateTaskRequest
+import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task
-import nel.marco.db.TaskJpaRepository
+import nel.marco.service.TaskService
+import org.springframework.http.MediaType.ALL_VALUE
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.time.OffsetDateTime
 
 @RestController
 class TaskController(
-    private val taskJpaRepository: TaskJpaRepository
+    private val taskService: TaskService
 ) {
-
-    @GetMapping("/create")
-    fun createTask(): Task {
-        val newTask = Task(message = "Remember to your task on " + OffsetDateTime.now())
-        return taskJpaRepository.save(newTask)
+    @GetMapping("/create", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    fun createTask(): TaskModel {
+        return taskService.createTask(CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now()))
     }
 
-    @GetMapping("/find")
+    @PostMapping("/create", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+    fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskModel {
+        return taskService.createTask(createTaskRequest)
+    }
+
+    @GetMapping("/find", consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
     fun findAllTasks(): List<Task> {
-        return taskJpaRepository.findAll().toList()
+        return taskService.findAll()
     }
 }
