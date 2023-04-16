@@ -2,8 +2,10 @@ package nel.marco.api
 
 import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.api.v1.model.TaskModel
-import nel.marco.db.Task
 import nel.marco.service.TaskService
+import nel.marco.service.dto.TaskDto
+import nel.marco.service.dto.mapToDomain
+import nel.marco.service.dto.mapToModel
 import org.springframework.http.MediaType.ALL_VALUE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
@@ -17,23 +19,25 @@ class TaskController(
     private val taskService: TaskService
 ) {
     @GetMapping("/create")
-    fun createTask(): TaskModel {
+    fun createTask(): TaskDto {
         return taskService.createTask(CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now()))
     }
 
     @PostMapping("/task")
-    fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskModel {
+    fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskDto {
         return taskService.createTask(createTaskRequest)
     }
 
     @PutMapping("/task")
     fun updateTask(@RequestBody taskToUpdate: TaskModel): TaskModel {
-        return taskService.updateTask(taskToUpdate)
+        val domain = taskToUpdate.mapToDomain()
+        val updatedDomainTask = taskService.updateTask(domain)
+        return updatedDomainTask.mapToModel()
     }
 
     @GetMapping("/task")
-    fun findAllTasks(): List<Task> {
-        return taskService.findAll()
+    fun findAllTasks(): List<TaskModel> {
+        return taskService.findAll().map { it.mapToModel() }
     }
 
     @GetMapping("/task/{id}")
@@ -43,7 +47,7 @@ class TaskController(
         if (find == null)
             return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(find)
+        return ResponseEntity.ok(find.mapToModel())
     }
 
     @DeleteMapping("/task/{id}")

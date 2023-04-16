@@ -88,7 +88,7 @@ internal class TaskControllerTest {
     fun `update task that exist`() {
         taskController.createTask()
         val createTask = taskController.createTask()
-        val updatedTask = taskController.updateTask(TaskModel(id = createTask.id, message = "changed"))
+        val updatedTask = taskController.updateTask(TaskModel(id = createTask.id!!, message = "changed"))
 
         assertThat(updatedTask.id).isEqualTo(createTask.id)
         assertThat(updatedTask.message).isEqualTo("changed")
@@ -98,7 +98,7 @@ internal class TaskControllerTest {
     @Test
     fun `delete task that exist`() {
         val createTask = taskController.createTask()
-        val deleteTask = taskController.deleteTask(createTask.id)
+        val deleteTask = taskController.deleteTask(createTask.id!!)
 
         assertThat(deleteTask.statusCode.is2xxSuccessful).isTrue()
     }
@@ -107,7 +107,7 @@ internal class TaskControllerTest {
     @Test
     fun `able to find task that exist`() {
         val createTask = taskController.createTask()
-        val found = taskController.findTask(createTask.id)
+        val found = taskController.findTask(createTask.id!!)
 
         assertThat(found.statusCode.is2xxSuccessful).isTrue
         assertThat(found.body!!.id).isEqualTo(createTask.id)

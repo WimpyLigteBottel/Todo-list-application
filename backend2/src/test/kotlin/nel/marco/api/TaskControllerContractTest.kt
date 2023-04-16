@@ -106,7 +106,7 @@ internal class TaskControllerContractTest {
     fun `deleting task that does expist`() {
         val entity = restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
 
-        restTemplate.delete(buildUrl("/task/${entity.body.id}"))
+        restTemplate.delete(buildUrl("/task/${entity.body!!.id}"))
     }
 
 }
