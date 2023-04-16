@@ -19,13 +19,16 @@ class TaskController(
     private val taskService: TaskService
 ) {
     @GetMapping("/create")
-    fun createTask(): TaskDto {
-        return taskService.createTask(CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now()))
+    fun createTask(): TaskModel {
+        val request = CreateTaskRequest(message = "Remember to your task on " + OffsetDateTime.now())
+        val createTask = taskService.createTask(request)
+        return createTask.mapToModel()
     }
 
     @PostMapping("/task")
-    fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskDto {
-        return taskService.createTask(createTaskRequest)
+    fun createTask(@Validated @RequestBody createTaskRequest: CreateTaskRequest): TaskModel {
+        val createTask = taskService.createTask(createTaskRequest)
+        return createTask.mapToModel()
     }
 
     @PutMapping("/task")
@@ -51,7 +54,7 @@ class TaskController(
     }
 
     @DeleteMapping("/task/{id}")
-    fun deleteTask(@PathVariable id: Long): ResponseEntity<Any?> {
+    fun deleteTask(@PathVariable id: Long): ResponseEntity<Any> {
         taskService.delete(id)
         return ResponseEntity.noContent().build()
     }
