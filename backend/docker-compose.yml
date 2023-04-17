@@ -9,4 +9,23 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - db
+    networks:
+      - todo-list-network
+
+  db:
+    container_name: backend-database
+    image: postgres:14-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=TaskDatabase
+    networks:
+      - todo-list-network
+networks:
+  todo-list-network:
