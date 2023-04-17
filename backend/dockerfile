@@ -1,0 +1,21 @@
+# -------------------
+# Make use of maven docker file... It builds longer since it redownloads everything
+# -------------------
+#FROM maven:3.8.4-openjdk-17-slim AS build
+#WORKDIR /app
+#COPY . .
+#RUN mvn clean package -DskipTests
+
+# Create a new container for running the application
+#FROM azul/zulu-openjdk:17
+#WORKDIR /app
+#COPY --from=build /app/target/*.jar ./app.jar
+#CMD ["java", "-jar", "app.jar"]
+
+# -------------------
+# using existing jar file in application properties
+# -------------------
+FROM azul/zulu-openjdk:17
+WORKDIR .
+COPY /target/*.jar ./app.jar
+CMD ["java", "-jar", "app.jar"]
