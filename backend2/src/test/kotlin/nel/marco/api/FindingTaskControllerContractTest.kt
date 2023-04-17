@@ -28,8 +28,8 @@ internal class FindingTaskControllerContractTest {
     lateinit var restTemplate: TestRestTemplate
 
 
-    private fun buildUrl(extension: String) =
-        "http://localhost:${environment.getProperty("local.server.port")}$extension"
+    private fun buildUrl(extension: String, version: String = "/v1") =
+        "http://localhost:${environment.getProperty("local.server.port")}$version$extension"
 
 
     @BeforeEach

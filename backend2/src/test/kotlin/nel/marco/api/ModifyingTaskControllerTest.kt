@@ -1,6 +1,7 @@
 package nel.marco.api
 
 
+import nel.marco.api.v1.ModifyingTaskController
 import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.api.v1.model.TaskModel
 import nel.marco.db.Task

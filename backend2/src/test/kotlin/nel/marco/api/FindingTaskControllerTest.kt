@@ -1,6 +1,7 @@
 package nel.marco.api
 
 
+import nel.marco.api.v1.FindingTaskController
 import nel.marco.db.Task
 import nel.marco.db.TaskJpaRepository
 import org.assertj.core.api.Assertions.assertThat

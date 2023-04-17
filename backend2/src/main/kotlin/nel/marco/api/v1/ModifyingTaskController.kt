@@ -1,4 +1,4 @@
-package nel.marco.api
+package nel.marco.api.v1
 
 import nel.marco.api.v1.model.CreateTaskRequest
 import nel.marco.api.v1.model.TaskModel
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
-@RequestMapping(path = ["/"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/v1"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
 class ModifyingTaskController(
     private val taskService: TaskService
 ) {

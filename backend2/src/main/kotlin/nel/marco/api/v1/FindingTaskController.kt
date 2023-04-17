@@ -1,4 +1,4 @@
-package nel.marco.api
+package nel.marco.api.v1
 
 import nel.marco.api.v1.model.TaskModel
 import nel.marco.service.TaskService
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping(path = ["/"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(path = ["/v1"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
 class FindingTaskController(
     private val taskService: TaskService
 ) {
