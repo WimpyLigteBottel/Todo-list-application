@@ -12,6 +12,7 @@ import java.time.LocalDate
 
 @RestController
 @RequestMapping(path = ["/v1"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+@CrossOrigin
 class FindingTaskController(
     private val taskService: TaskService
 ) {

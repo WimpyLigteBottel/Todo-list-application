@@ -14,6 +14,7 @@ import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping(path = ["/v1"], consumes = [ALL_VALUE], produces = [APPLICATION_JSON_VALUE])
+@CrossOrigin
 class ModifyingTaskController(
     private val taskService: TaskService
 ) {
