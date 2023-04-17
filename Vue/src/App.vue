@@ -1,6 +1,6 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-    <TaskView/>
+  <img alt="Vue logo" src="./assets/todo.png" class="logo">
+  <TaskView />
 </template>
 
 <script>
@@ -22,5 +22,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
 }
 </style>
