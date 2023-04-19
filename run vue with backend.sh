@@ -1,0 +1,1 @@
+docker-compose -f ./backend/docker-compose.yml -f ./Vue/docker-compose.yml up
