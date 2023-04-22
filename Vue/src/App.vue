@@ -12,7 +12,7 @@
 import TaskView from './components/TaskView.vue'
 
 export default {
-  name: 'App',
+  name: 'TodoApplication',
   components: {
     TaskView
   },

@@ -1,9 +1,10 @@
 {
-  "name": "my-project",
+  "name": "TodoApplication",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "pro": "serve -s dist -p 8080",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -13,6 +14,7 @@
     "vue": "^3.2.13"
   },
   "devDependencies": {
+    "serve": "^14.2.0",
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",
