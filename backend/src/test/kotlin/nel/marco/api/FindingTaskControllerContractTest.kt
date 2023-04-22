@@ -51,7 +51,6 @@ internal class FindingTaskControllerContractTest {
 
     }
 
-
     @Test
     fun `findall all tasks that contain marco`() {
         restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco1"), TaskModel::class.java)

@@ -39,7 +39,7 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
-    fun `create default task and expect task to be in db`() {
+    fun `create default task and verify task is persisted in the database`() {
         val forEntity = restTemplate.getForEntity(
             buildUrl("/create"),
             TaskModel::class.java
@@ -51,7 +51,7 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
-    fun `create custom request with message`() {
+    fun `create custom task with a message and verify message is persisted in the database`() {
         val forEntity = restTemplate.postForEntity(
             buildUrl("/task"),
             CreateTaskRequest("marco"),
@@ -63,7 +63,7 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
-    fun `create a task and update it`() {
+    fun `create a task and update it with a new message`() {
         val response = restTemplate.postForEntity(
             buildUrl("/task"),
             CreateTaskRequest("to be changed"),
@@ -78,7 +78,7 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
-    fun `create a task and update it as completed`() {
+    fun `create a task and mark it as completed`() {
         val response = restTemplate.postForEntity(
             buildUrl("/task"),
             CreateTaskRequest("to be changed"),
@@ -97,12 +97,12 @@ internal class ModifyingTaskControllerContractTest {
     }
 
     @Test
-    fun `deleting task that does not exist`() {
+    fun `delete task that does not exist and verify that no error occurs`() {
         restTemplate.delete(buildUrl("/task/99999999999999999"))
     }
 
     @Test
-    fun `deleting task that does expist`() {
+    fun `delete task that exists in the database`() {
         val entity = restTemplate.postForEntity(buildUrl("/task"), CreateTaskRequest("marco2"), TaskModel::class.java)
 
         restTemplate.delete(buildUrl("/task/${entity.body!!.id}"))
