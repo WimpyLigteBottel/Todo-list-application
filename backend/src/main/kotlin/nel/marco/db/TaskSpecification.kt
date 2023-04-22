@@ -31,17 +31,21 @@ class TaskSpecification(
         cb: CriteriaBuilder,
         root: Root<Task>
     ) {
-        if (completed != null)
-            predicates.add(cb.equal(root.get<Boolean>("completed"), completed))
+        if (completed == null)
+            return
+
+        predicates.add(cb.equal(root.get<Boolean>("completed"), completed))
     }
 
     private fun addIdFilters(
         predicates: MutableList<Predicate>,
         root: Root<Task>
     ) {
-        if (!ids.isNullOrEmpty()) {
-            predicates.add(root.get<Long>("id").`in`(ids))
+        if (ids.isNullOrEmpty()) {
+            return
         }
+
+        predicates.add(root.get<Long>("id").`in`(ids))
     }
 
     private fun addMessageFilter(
@@ -49,9 +53,11 @@ class TaskSpecification(
         cb: CriteriaBuilder,
         root: Root<Task>
     ) {
-        if (message?.isNotBlank() == true) {
-            predicates.add(cb.like(cb.lower(root.get("message")), "%$message%"))
+        if (message.isNullOrBlank()) {
+            return
         }
+
+        predicates.add(cb.like(cb.lower(root.get("message")), "%$message%"))
     }
 
     private fun addDateFilters(
@@ -59,16 +65,19 @@ class TaskSpecification(
         cb: CriteriaBuilder,
         root: Root<Task>
     ) {
+        if (isAfter == null && isBefore == null)
+            return
+
         if (isAfter != null && isBefore != null) {
             predicates.add(cb.between(root.get("created"), isAfter, isBefore))
-        } else {
-            if (isBefore != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("created"), isBefore))
-            }
-            if (isAfter != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("created"), isAfter))
-            }
+            return
+        }
+
+        if (isBefore != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("created"), isBefore))
+        }
+        if (isAfter != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("created"), isAfter))
         }
     }
-
 }

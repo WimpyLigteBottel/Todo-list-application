@@ -7,6 +7,7 @@ import nel.marco.db.TaskSpecification
 import nel.marco.service.dto.TaskDto
 import nel.marco.service.dto.mapToDomain
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,7 +35,8 @@ class TaskService(
                 isBefore = isBefore,
                 isAfter = isAfter,
                 completed = completed
-            )
+            ),
+            Sort.by(Sort.Direction.ASC, "id")
         ).map {
             it.mapToDomain()
         }.toList()

@@ -26,16 +26,19 @@ class FindingTaskController(
         @RequestParam(required = false) completed: Boolean? = null,
     ): List<TaskModel> {
         val findAll =
-            taskService.findAll(ids, message, isBefore = isBefore, isAfter = isAfter, completed = completed)
+            taskService.findAll(
+                ids = ids,
+                message = message,
+                isBefore = isBefore,
+                isAfter = isAfter,
+                completed = completed
+            )
         return findAll.map { it.mapToModel() }
     }
 
     @GetMapping("/task/{id}")
     fun findTask(@PathVariable id: Long): ResponseEntity<TaskModel> {
-        val find = taskService.find(id)
-
-        if (find == null)
-            return ResponseEntity.notFound().build()
+        val find = taskService.find(id) ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(find.mapToModel())
     }

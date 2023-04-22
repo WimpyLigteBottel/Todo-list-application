@@ -16,6 +16,7 @@ import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.whenever
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import java.util.*
 
@@ -48,7 +49,8 @@ internal class TaskServiceTest {
     fun `findAll tasks given 3 exist expect 3 tasks back`() {
         whenever(
             taskJpaRepository.findAll(
-                any(TaskSpecification::class.java)
+                any(TaskSpecification::class.java),
+                any(Sort::class.java)
             )
         ).thenReturn(listOf(Task(), Task(), Task()))
         val tasks = taskService.findAll()
