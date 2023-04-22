@@ -9,7 +9,7 @@ export async function fetchTasks() {
     .catch((error) => {
       console.error(error);
     });
-
+  
   return data;
 }
 

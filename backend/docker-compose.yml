@@ -1,6 +1,5 @@
-version: '3.8'
+version: '2'
 
-name: "todoapplication"
 services:
   app:
     container_name: backend-app
