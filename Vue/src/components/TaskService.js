@@ -1,21 +1,27 @@
 import axios from "axios";
 
-export async function fetchTasks() {
+const baseUrl = `http://localhost:8090`;
+
+export async function fetchTasks(filterText) {
+  if (!filterText) {
+    filterText = ``;
+  }
+
   let data = axios
-    .get("http://localhost:8090/v1/task")
+    .get(`${baseUrl}/v1/task?message=${filterText}`)
     .then((response) => {
       return response.data;
     })
     .catch((error) => {
       console.error(error);
     });
-  
+
   return data;
 }
 
 export async function updateTask(task) {
   let data = axios
-    .put("http://localhost:8090/v1/task", task)
+    .put(`${baseUrl}/v1/task`, task)
     .then((response) => {
       return response.data;
     })
@@ -28,7 +34,7 @@ export async function updateTask(task) {
 
 export async function removeTask(id) {
   let data = axios
-    .delete(`http://localhost:8090/v1/task/${id}`)
+    .delete(`${baseUrl}/v1/task/${id}`)
     .then((response) => {
       return response.data;
     })
@@ -41,7 +47,7 @@ export async function removeTask(id) {
 
 export async function createTask() {
   let data = axios
-    .get(`http://localhost:8090/v1/create`)
+    .get(`${baseUrl}/v1/create`)
     .then((response) => {
       return response.data;
     })

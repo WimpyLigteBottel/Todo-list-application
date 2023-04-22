@@ -2,18 +2,31 @@
   <div class="main">
     <div class="body">
 
-      <div v-for="(task, index) in tasks" :key="index">
 
-        <input v-model="task.message" size="50" :class="{ 'completed': task.completed, 'changed': task.hasUpdated, 'css-input': true }" @keydown="markTaskAsUnsaved(index)"
-          @keydown.enter="updateTask(index)">
+      <div>
+        <input v-model="this.filterText" size="50" @keydown.enter="getAllTask()">
+        <button :class="{ 'coolButton': true }" @click="getAllTask()">SEARCH</button>
+        <button :class="{ 'coolButton': true }" @click="clearFilter()">CLEAR</button>
+      </div>
 
+      <br />
+      <br />
+      <br />
+
+      <div v-for=" (task, index) in tasks" :key="index">
         <div>
-          <button :class="{ 'coolButton': true }" @click="checkTask(index)">CHECK</button>
-          <button :class="{ 'coolButton': true }" @click="removeTask(index)">REMOVE</button>
-          <button :class="{ 'coolButton': true }" @click="updateTask(index)">UPDATE</button>
+          <input v-model="task.message" size="50" :class="{ 'completed': task.completed, 'changed': task.hasUpdated, 'css-input': true }" @keydown="markTaskAsUnsaved(index)"
+            @keydown.enter="updateTask(index)">
+
+          <div>
+            <button :class="{ 'coolButton': true }" @click="checkTask(index)">CHECK</button>
+            <button :class="{ 'coolButton': true }" @click="removeTask(index)">REMOVE</button>
+            <button :class="{ 'coolButton': true }" @click="updateTask(index)">UPDATE</button>
+          </div>
+          <br />
+          <br />
         </div>
-        <br />
-        <br />
+
       </div>
     </div>
 
@@ -36,7 +49,7 @@ export default {
   },
   data() {
     return {
-      counter: 0,
+      filterText: '',
       tasks: [
         {
           "id": 0,
@@ -44,19 +57,27 @@ export default {
           "created": "2023-04-17T19:36:50.4613385Z",
           "updated": "2023-04-17T19:36:50.4613993Z",
           "completed": false,
-          "hasUpdated": false,
+          "hasUpdated": false
         }]
     }
   },
   methods: {
     async getAllTask() {
-      this.tasks = await fetchTasks()
+      this.tasks = await fetchTasks(this.filterText)
 
       // resets the hasUpdated field for each task
       this.tasks.forEach((task) => {
         task["hasUpdated"] = false
       })
 
+      if (this.filterText.length == 0)
+        return
+
+
+      this.tasks = this.tasks.filter((task) => {
+        console.log('filtering')
+        return task.message.includes(this.filterText)
+      })
     },
     async checkTask(index) {
       let task = this.tasks[index]
@@ -81,6 +102,9 @@ export default {
     markTaskAsUnsaved(index) {
       let task = this.tasks[index]
       task.hasUpdated = true
+    },
+    clearFilter() {
+      this.filterText = ''
     }
   }
 }
@@ -88,6 +112,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.notVisible {
+  display: none;
+}
+
 .completed {
   text-decoration: line-through;
 }
