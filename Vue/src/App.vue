@@ -1,6 +1,11 @@
 <template>
+  <div>
+    <label><input @change="handleChange()" type="radio" value="" checked v-model="filterGroup"> All</label>
+    <label><input @change="handleChange()" type="radio" value="true" v-model="filterGroup"> Completed</label>
+    <label><input @change="handleChange()" type="radio" value="false" v-model="filterGroup"> Uncompleted</label>
+  </div>
   <img alt="Vue logo" src="./assets/todo.png" class="logo">
-  <TaskView />
+  <TaskView :filterGroup="filterGroup" ref="TaskView" />
 </template>
 
 <script>
@@ -10,6 +15,16 @@ export default {
   name: 'App',
   components: {
     TaskView
+  },
+  data() {
+    return {
+      filterGroup: null
+    }
+  },
+  methods: {
+    async handleChange() {
+      await this.$refs.TaskView.getAllTask();
+    }
   }
 }
 </script>

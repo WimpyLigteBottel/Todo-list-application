@@ -2,11 +2,13 @@
   <div class="main">
     <div class="body">
 
-
       <div>
-        <input v-model="this.filterText" size="50" @keydown.enter="getAllTask()">
-        <button :class="{ 'coolButton': true }" @click="getAllTask()">SEARCH</button>
-        <button :class="{ 'coolButton': true }" @click="clearFilter()">CLEAR</button>
+        <input v-model="this.filterText" :class="{ 'css-input': true }" size="50" @change="getAllTask()">
+        <div>
+          <button :class="{ 'coolButton': true }" @click="getAllTask()">SEARCH</button>
+          <button :class="{ 'coolButton': true }" @click="clearFilter()">CLEAR</button>
+        </div>
+
       </div>
 
       <br />
@@ -44,8 +46,14 @@ import { fetchTasks, updateTask, removeTask, createTask } from './TaskService.js
 
 export default {
   name: 'TaskView',
+  props: {
+    filterGroup: {
+      value: null
+    },
+  },
   mounted() {
     this.getAllTask()
+
   },
   data() {
     return {
@@ -63,7 +71,7 @@ export default {
   },
   methods: {
     async getAllTask() {
-      this.tasks = await fetchTasks(this.filterText)
+      this.tasks = await fetchTasks(this.filterText, this.filterGroup)
 
       // resets the hasUpdated field for each task
       this.tasks.forEach((task) => {
@@ -73,10 +81,10 @@ export default {
       if (this.filterText.length == 0)
         return
 
-
       this.tasks = this.tasks.filter((task) => {
-        console.log('filtering')
-        return task.message.includes(this.filterText)
+        let message = task.message.toLowerCase()
+        let filter = this.filterText.toLowerCase()
+        return message.includes(filter)
       })
     },
     async checkTask(index) {
@@ -127,7 +135,7 @@ export default {
 .css-input {
   width: 50%;
   margin-right: 1%;
-  font-size: calc(15px + 0.390625vw);
+  font-size: calc(13px + 0.390625vw);
 }
 
 .coolButton {
@@ -140,7 +148,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: calc(15px + 0.390625vw);
+  font-size: calc(10px + 0.390625vw);
   font-weight: 600;
   line-height: normal;
   margin: 0;

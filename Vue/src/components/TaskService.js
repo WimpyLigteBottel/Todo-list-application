@@ -2,13 +2,17 @@ import axios from "axios";
 
 const baseUrl = `http://localhost:8090`;
 
-export async function fetchTasks(filterText) {
+export async function fetchTasks(filterText, isCompleted) {
   if (!filterText) {
     filterText = ``;
   }
 
+  if (!isCompleted) {
+    isCompleted = ``;
+  }
+
   let data = axios
-    .get(`${baseUrl}/v1/task?message=${filterText}`)
+    .get(`${baseUrl}/v1/task?message=${filterText}&completed=${isCompleted}`)
     .then((response) => {
       return response.data;
     })
