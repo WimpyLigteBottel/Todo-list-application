@@ -1,32 +1,6 @@
 version: '3'
 
 services:
-  app:
-    container_name: backend-app
-    build:
-      context: .
-      dockerfile: dockerfile
-    ports:
-      - "8090:8090"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - db
-    networks:
-      - todo-list-network
-
-  db:
-    container_name: backend-database
-    image: postgres:14-alpine
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=TaskDatabase
-    networks:
-      - todo-list-network
   testdb:
     container_name: backend-database-testing
     image: postgres:14-alpine
@@ -37,5 +11,3 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=TaskDatabase
-networks:
-  todo-list-network:
