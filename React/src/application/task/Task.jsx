@@ -1,44 +1,47 @@
 import "./Task.css";
+import {updateTask} from "../core/TaskService";
+import React, { useState } from "react";
+
+
+function update() {
+  alert('update')
+}
+
+function remove() {
+  alert('remove')
+}
+
+function check(task) {
+  task.completed = !task.completed
+  updateTask(task)
+
+  console.log('updated task ' + JSON.stringify(task))
+}
 
 
 
-function Task(props) {
+function Task(data) {
 
-  let tasks = props.tasks
+  let tasks = data.tasks
   
   return (
     <div>
-       {
-        tasks.map((task) => (
-
-      <input key={task.id}
-        className="css-input"
-        value={task.message}
-        onChange={e => tasks}
-      />
+      {
+        tasks.map((task) => 
+        (
+          <div key={task.id}>
+            <input key={task.id + 'input'} className={`css-input ${task.completed ? 'completed' : ''}`} value={task.message} onChange={e=> task.message = e.target.value}/>
+            <button key={task.id + 'check'} onClick={() => {
+              check(task)
+              data.callBack()
+            }} className="coolButton">Check</button>
+            <button key={task.id + 'remove'} onClick={()=>remove()} className="coolButton">Remove</button>
+            <button key={task.id + 'update'} onClick={()=>update()} className="coolButton">Update</button>
+          </div>
         ))
-        }
+      }
      </div>
   );
 }
 
 export default Task;
-
-
-/*
- <div v-for=" (task, index) in tasks" :key="index">
-        <div>
-          <input v-model="task.message" size="50" :class="{ 'completed': task.completed, 'changed': task.hasUpdated, 'css-input': true }" @keydown="markTaskAsUnsaved(index)"
-            @keydown.enter="updateTask(index)">
-
-          <div>
-            <button :class="{ 'coolButton': true }" @click="checkTask(index)">CHECK</button>
-            <button :class="{ 'coolButton': true }" @click="removeTask(index)">REMOVE</button>
-            <button :class="{ 'coolButton': true }" @click="updateTask(index)">UPDATE</button>
-          </div>
-          <br />
-          <br />
-        </div>
-
-      </div>
-      */

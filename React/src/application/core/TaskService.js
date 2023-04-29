@@ -2,6 +2,17 @@ import axios from "axios";
 
 const baseUrl = `http://localhost:8090`;
 
+/*
+Below is teh exampel object of task
+{
+    "id": 2,
+    "message": "abc",
+    "created": "2023-04-23T18:45:33.205394Z",
+    "updated": "2023-04-29T13:42:37.268949Z",
+    "completed": false
+}
+*/
+
 export async function fetchTasks(filterText, isCompleted) {
   if (!filterText) {
     filterText = ``;

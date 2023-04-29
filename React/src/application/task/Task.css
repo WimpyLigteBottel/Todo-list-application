@@ -50,3 +50,12 @@
   box-shadow: none;
   transform: translateY(0);
 }
+
+
+.completed {
+  text-decoration: line-through;
+}
+
+.changed {
+  color: red;
+}
