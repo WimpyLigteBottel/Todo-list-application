@@ -1,5 +1,6 @@
 import "./App.css";
 import Search from "./search/Search";
+import Radio from "./radio/Radio";
 import { fetchTasks, removeTask, updateTask } from "./core/TaskService";
 import { useEffect, useState } from "react";
 
@@ -17,25 +18,42 @@ function remove(task) {
 
 function App() {
   const [tasks, setTasks] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [filterText, setFilterText] = useState("");
 
   async function updateTasks(result) {
     setTasks(await result);
   }
 
-  async function refresh() {
+  async function refresh(filterText, selectedOption) {
     console.log("parent: refresh");
-    let result = await fetchTasks("", "");
+    let result = await fetchTasks(filterText, selectedOption);
     updateTasks(result);
   }
 
   useEffect(() => {
-    refresh();
+    refresh(filterText, selectedOption);
   }, []);
 
   return (
     <div>
+      <Radio
+        selectedOption={selectedOption}
+        handleChange={(event) => {
+          setSelectedOption(event.target.value);
+          refresh(filterText, event.target.value);
+        }}
+      ></Radio>
+
       {/* search button */}
-      <Search callBack={updateTasks}></Search>
+      <Search
+        filterText={filterText}
+        isCompleted={selectedOption}
+        onFilterChange={(event) => {
+          setFilterText(event.target.value);
+          refresh(event.target.value, selectedOption);
+        }}
+      ></Search>
 
       {/* Tasks is below*/}
       <div>
@@ -50,6 +68,7 @@ function App() {
                 updateTask(tasks[index]);
               }}
             />
+
             <div>
               <button
                 key={task.id + "check"}
@@ -77,6 +96,8 @@ function App() {
                 Update
               </button>
             </div>
+            <br />
+            <br />
           </div>
         ))}
       </div>

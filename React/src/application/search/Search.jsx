@@ -1,42 +1,47 @@
 import "./Search.css";
-import { fetchTasks } from "../core/TaskService"; 
-import { useState } from "react";
+import { fetchTasks } from "../core/TaskService";
 
 async function findAllTasks(filterText, isCompleted) {
   return await fetchTasks(filterText, isCompleted);
 }
 
-
 function findTasksAndSendToParent(data, filterText, isCompleted) {
   let tasks = findAllTasks(filterText, isCompleted);
-  data.callBack(tasks);
+  data.onFilterChange(tasks);
 }
 
-
-
 function Search(data) {
-  let [filterText, setFilterText] = useState('');
-  let [isCompleted] = useState('');
-
+  let filterText = data.filterText;
+  let isCompleted = data.selectionOption;
 
   return (
     <div>
-      <input id="searchBar"
+      <input
+        id="searchBar"
         className="css-input"
-        value={filterText}
-        onChange={e => {
-          setFilterText(e.target.value)
-          findTasksAndSendToParent(data, e.target.value, isCompleted)
-        }}
+        defaultValue={filterText}
+        onChange={data.onFilterChange}
       />
-      <button className="coolButton" onClick={() => {
-        findTasksAndSendToParent(data,filterText,isCompleted)
-      }}>
+      <br />
+      <button
+        className="coolButton"
+        onClick={() => {
+          findTasksAndSendToParent(data, filterText, isCompleted);
+        }}
+      >
         Search
       </button>
-      {/* <button className="coolButton">
+      <button
+        className="coolButton"
+        onClick={() => {
+          filterText = "";
+          findTasksAndSendToParent(data, "", isCompleted);
+        }}
+      >
         Clear
-      </button> */}
+      </button>
+      <br />
+      <br />
     </div>
   );
 }
