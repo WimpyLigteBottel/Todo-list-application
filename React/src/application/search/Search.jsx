@@ -1,14 +1,4 @@
 import "./Search.css";
-import { fetchTasks } from "../core/TaskService";
-
-async function findAllTasks(filterText, isCompleted) {
-  return await fetchTasks(filterText, isCompleted);
-}
-
-function findTasksAndSendToParent(data, filterText, isCompleted) {
-  let tasks = findAllTasks(filterText, isCompleted);
-  data.onFilterChange(tasks);
-}
 
 function Search(data) {
   let filterText = data.filterText;

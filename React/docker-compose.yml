@@ -1,0 +1,22 @@
+version: '3'
+services:
+  frontend-react:
+    image: node:latest
+    volumes:
+      - ./:/app
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "cd /app && npm run pro"
+  frontend-withbuild:
+    image: node:latest
+    volumes:
+      - ./:/app
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "cd /app && npm run build && npm run pro"
