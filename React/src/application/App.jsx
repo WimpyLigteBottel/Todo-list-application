@@ -1,6 +1,7 @@
 import "./App.css";
 import Search from "./search/Search";
 import Radio from "./radio/Radio";
+import Task from "./task/Task";
 import { fetchTasks, removeTask, updateTask } from "./core/TaskService";
 import { useEffect, useState } from "react";
 
@@ -21,14 +22,23 @@ function App() {
   const [selectedOption, setSelectedOption] = useState("");
   const [filterText, setFilterText] = useState("");
 
-  async function updateTasks(result) {
-    setTasks(await result);
-  }
-
   async function refresh(filterText, selectedOption) {
     console.log("parent: refresh");
     let result = await fetchTasks(filterText, selectedOption);
-    updateTasks(result);
+    setTasks(result);
+  }
+
+  async function updateSpecificTask(index, newMessage) {
+    console.log("parent making change");
+    tasks[index].message = newMessage;
+    setTasks(tasks);
+    refresh(filterText, selectedOption);
+  }
+
+  function clear() {
+    console.log("clear text");
+    setFilterText("");
+    // window.location.reload(false); // hacky way to reload
   }
 
   useEffect(() => {
@@ -48,59 +58,24 @@ function App() {
       {/* search button */}
       <Search
         filterText={filterText}
-        isCompleted={selectedOption}
         onFilterChange={(event) => {
           setFilterText(event.target.value);
           refresh(event.target.value, selectedOption);
         }}
+        callbackSearch={(event) => {
+          refresh(filterText, selectedOption);
+        }}
+        callbackClear={(event) => {
+          clear();
+        }}
       ></Search>
 
-      {/* Tasks is below*/}
-      <div>
-        {tasks.map((task, index) => (
-          <div key={task.id}>
-            <input
-              key={task.id + "input"}
-              className={"css-input " + (task.completed ? "completed" : "")}
-              defaultValue={task.message}
-              onChange={(e) => {
-                tasks[index].message = e.target.value;
-                updateTask(tasks[index]);
-              }}
-            />
-
-            <div>
-              <button
-                key={task.id + "check"}
-                className="coolButton"
-                onClick={() => {
-                  check(task);
-                }}
-              >
-                Check
-              </button>
-
-              <button
-                key={task.id + "remove"}
-                className="coolButton"
-                onClick={() => remove(task)}
-              >
-                Remove
-              </button>
-
-              <button
-                key={task.id + "update"}
-                className="coolButton"
-                onClick={() => updateTask(task)}
-              >
-                Update
-              </button>
-            </div>
-            <br />
-            <br />
-          </div>
-        ))}
-      </div>
+      <Task
+        tasks={tasks}
+        callback={updateSpecificTask}
+        callbackRemove={remove}
+        callbackCheck={check}
+      ></Task>
     </div>
   );
 }

@@ -12,7 +12,6 @@ function findTasksAndSendToParent(data, filterText, isCompleted) {
 
 function Search(data) {
   let filterText = data.filterText;
-  let isCompleted = data.selectionOption;
 
   return (
     <div>
@@ -26,7 +25,7 @@ function Search(data) {
       <button
         className="coolButton"
         onClick={() => {
-          findTasksAndSendToParent(data, filterText, isCompleted);
+          data.callbackSearch();
         }}
       >
         Search
@@ -35,7 +34,7 @@ function Search(data) {
         className="coolButton"
         onClick={() => {
           filterText = "";
-          findTasksAndSendToParent(data, "", isCompleted);
+          data.callbackClear();
         }}
       >
         Clear
