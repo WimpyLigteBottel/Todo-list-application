@@ -2,7 +2,13 @@ import "./App.css";
 import Search from "./search/Search";
 import Radio from "./radio/Radio";
 import Task from "./task/Task";
-import { fetchTasks, removeTask, updateTask } from "./core/TaskService";
+import AddingButton from "./adding/AddingButton";
+import {
+  fetchTasks,
+  removeTask,
+  updateTask,
+  createTask,
+} from "./core/TaskService";
 import { useEffect, useState } from "react";
 
 function check(task) {
@@ -14,6 +20,11 @@ function check(task) {
 
 function remove(task) {
   removeTask(task.id);
+  window.location.reload(false); // hacky way to reload
+}
+
+function addNewTask() {
+  createTask();
   window.location.reload(false); // hacky way to reload
 }
 
@@ -76,6 +87,8 @@ function App() {
         callbackRemove={remove}
         callbackCheck={check}
       ></Task>
+
+      <AddingButton callbackAddTask={addNewTask}></AddingButton>
     </div>
   );
 }
