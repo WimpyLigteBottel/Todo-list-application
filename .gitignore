@@ -1,3 +1,5 @@
 .jpb
 .idea
 /target
+/Angular/node_modules/
+/Angular/.angular/

@@ -1,0 +1,38 @@
+<div>
+    <div>
+        <input type="radio" (change)="updateFilter('')" id="All" value="" checked name="isCompleted">
+        <label for="All">All</label>
+        <input type="radio" (change)="updateFilter('true')" id="Completed" value="true" name="isCompleted">
+        <label>Completed</label>
+        <input type="radio" (change)="updateFilter('false')" id="Uncompleted" value="false" name="isCompleted">
+        <label>Uncompleted</label>
+    </div>
+    <img alt="Vue logo" src="./assets/todo.png" class="logo">
+    <div>
+        <input size="50" [(ngModel)]="filterText" (ngModelChange)="updateTasks()"
+               placeholder="Enter your search criteria">
+        <div>
+            <button (click)="updateTasks()">SEARCH</button>
+            <button (click)="clear()">CLEAR</button>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+
+    <li *ngFor="let task of tasks" [id]="task.id">
+
+        <input #id (change)="updateSpecificTask(task, id.value)" value="{{task.message}}"/>
+        <button (click)="completeTask(task)">check</button>
+        <button (click)="removeSpecificTask(task)">remove</button>
+        {{ task.id }} | {{task.message}}
+    </li>
+
+    <div>
+        <div>
+            <button (click)="createNewTask()">Add</button>
+        </div>
+    </div>
+
+
+</div>
