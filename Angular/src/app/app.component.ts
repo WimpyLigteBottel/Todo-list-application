@@ -51,6 +51,10 @@ export class AppComponent implements OnInit {
             })
     }
 
+    public markTaskAsUnsaved(task: Task) {
+        task.hasUpdated = true
+    }
+
     public updateSpecificTask(task: Task, message: string) {
         task.message = message
         this.taskService.updateTask(task)
@@ -75,13 +79,21 @@ export class AppComponent implements OnInit {
     }
 
     public updateFilter(value: string) {
-        if(value == '')
+        if (value == '')
             this.isCompleted = null
-        else if(value == 'true')
+        else if (value == 'true')
             this.isCompleted = true
-        else if(value == 'false')
+        else if (value == 'false')
             this.isCompleted = false
 
         this.updateTasks()
+    }
+
+    public onKeydownHandler(event: any, task: Task, message: string): void {
+        if (event.key === "Enter") {
+            this.updateSpecificTask(task, message)
+        } else {
+            this.markTaskAsUnsaved(task)
+        }
     }
 }

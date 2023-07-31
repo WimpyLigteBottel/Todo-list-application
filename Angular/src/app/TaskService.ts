@@ -43,6 +43,7 @@ export class Task {
     created: string | null = null
     updated: string | null = null
     completed: boolean | false = false
+    hasUpdated: boolean | false = false
 
     constructor(id: string | "", message: string | "") {
         this.id = id;

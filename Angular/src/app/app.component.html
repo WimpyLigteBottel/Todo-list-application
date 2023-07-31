@@ -1,4 +1,4 @@
-<div>
+<div class="body">
     <div>
         <input type="radio" (change)="updateFilter('')" id="All" value="" checked name="isCompleted">
         <label for="All">All</label>
@@ -9,29 +9,39 @@
     </div>
     <img alt="Vue logo" src="./assets/todo.png" class="logo">
     <div>
-        <input size="50" [(ngModel)]="filterText" (ngModelChange)="updateTasks()"
+        <input size="50" [(ngModel)]="filterText"
+               (ngModelChange)="updateTasks()"
+               [ngClass]="{'css-input': true}"
                placeholder="Enter your search criteria">
         <div>
-            <button (click)="updateTasks()">SEARCH</button>
-            <button (click)="clear()">CLEAR</button>
+            <button [ngClass]="{ 'coolButton': true }" (click)="updateTasks()">SEARCH</button>
+            <button [ngClass]="{ 'coolButton': true }" (click)="clear()">CLEAR</button>
         </div>
     </div>
     <br/>
     <br/>
     <br/>
 
-    <li *ngFor="let task of tasks" [id]="task.id">
-
-        <input #id (change)="updateSpecificTask(task, id.value)" value="{{task.message}}"/>
-        <button (click)="completeTask(task)">check</button>
-        <button (click)="removeSpecificTask(task)">remove</button>
-        {{ task.id }} | {{task.message}}
-    </li>
-
-    <div>
+    <ul *ngFor="let task of tasks" [id]="task.id">
+        <input #id
+               [ngClass]="{
+               'completed':task.completed ? 'completed': '',
+               'changed':task.hasUpdated ? 'changed': '',
+               'css-input': true
+               }"
+               value="{{task.message}}"
+               (keydown)="onKeydownHandler($event,task,id.value)"
+        />
         <div>
-            <button (click)="createNewTask()">Add</button>
+            <button [ngClass]="{ 'coolButton': true }" (click)="completeTask(task)">check</button>
+            <button [ngClass]="{ 'coolButton': true }" (click)="removeSpecificTask(task)">remove</button>
+            <button [ngClass]="{ 'coolButton': true }" (click)="updateSpecificTask(task, id.value)">update</button>
+
         </div>
+    </ul>
+
+    <div >
+            <button [ngClass]="{ 'coolButton': true ,'coolButton-green': true }" (click)="createNewTask()">Add</button>
     </div>
 
 
