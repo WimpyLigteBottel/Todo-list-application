@@ -3,3 +3,5 @@
 /target
 /Angular/node_modules/
 /Angular/.angular/
+/backend/target/
+/Angular/dist/
