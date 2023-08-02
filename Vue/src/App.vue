@@ -1,29 +1,51 @@
 <template>
-  <div>
-    <label><input @change="handleChange()" type="radio" value="" checked v-model="filterGroup"> All</label>
-    <label><input @change="handleChange()" type="radio" value="true" v-model="filterGroup"> Completed</label>
-    <label><input @change="handleChange()" type="radio" value="false" v-model="filterGroup"> Uncompleted</label>
-  </div>
-  <img alt="Vue logo" src="./assets/todo.png" class="logo">
-  <TaskView :filterGroup="filterGroup" ref="TaskView" />
+  <!-- ref is used so that i can call the function via $refs.SearchView to update tasks -->
+  <SearchView
+      ref="SearchView"
+      @updateParentTasks="setTasks"
+  />
+  <br/>
+  <br/>
+  <br/>
+  <TaskView
+      :propTasks="tasks"
+      @refreshParentTasks="refreshTasks"
+  />
 </template>
 
 <script>
-import TaskView from './components/TaskView.vue'
+import TaskView from './components/tasks/TaskView.vue'
+import SearchView from "./components/search/SearchView.vue";
 
 export default {
   name: 'TodoApplication',
   components: {
+    SearchView,
     TaskView
+  },
+  mounted() {
   },
   data() {
     return {
-      filterGroup: null
+      filterGroup: null,
+      tasks: [
+        {
+          "id": 0,
+          "message": "example message",
+          "created": "2023-04-17T19:36:50.4613385Z",
+          "updated": "2023-04-17T19:36:50.4613993Z",
+          "completed": false,
+          "hasUpdated": false
+        }]
     }
-  },
-  methods: {
-    async handleChange() {
-      await this.$refs.TaskView.getAllTask();
+  }, methods: {
+    refreshTasks() {
+      // See the ref="SearchView" above
+      this.$refs.SearchView.getTasksAndFilter();
+    },
+    setTasks(value) {
+      // This is necessary because i am emitting string
+      this.tasks = JSON.parse(value)
     }
   }
 }

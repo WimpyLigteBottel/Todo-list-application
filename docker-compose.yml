@@ -27,6 +27,19 @@ services:
       sh -c "cd /app && npm run build && npm run pro"
     networks:
       - todo-list-network
+  frontend-angular:
+    container_name: frontend-angular
+    image: node:latest
+    volumes:
+      - ./Angular:/app
+    ports:
+      - "8082:8082"
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "cd /app && npm run build && npm run pro"
+    networks:
+      - todo-list-network
   app:
     container_name: backend-kotlin
     build:
