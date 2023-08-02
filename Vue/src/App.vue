@@ -43,9 +43,9 @@ export default {
       // See the ref="SearchView" above
       this.$refs.SearchView.getTasksAndFilter();
     },
-    setTasks(value) {
+    setTasks(jsonStringValue) {
       // This is necessary because i am emitting string
-      this.tasks = JSON.parse(value)
+      this.tasks = JSON.parse(jsonStringValue)
     }
   }
 }
