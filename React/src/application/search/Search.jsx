@@ -1,38 +1,46 @@
 import "./Search.css";
+import {useEffect, useState} from "react";
 
 function Search(data) {
-  let filterText = data.filterText;
+    const [searchFilterText, setSearchFilterText] = useState("");
 
-  return (
-    <div>
-      <input
-        id="searchBar"
-        className="css-input"
-        defaultValue={filterText}
-        onChange={data.onFilterChange}
-      />
-      <br />
-      <button
-        className="coolButton"
-        onClick={() => {
-          data.callbackSearch();
-        }}
-      >
-        Search
-      </button>
-      <button
-        className="coolButton"
-        onClick={() => {
-          filterText = "";
-          data.callbackClear();
-        }}
-      >
-        Clear
-      </button>
-      <br />
-      <br />
-    </div>
-  );
+
+    useEffect(() => {
+        data.onFilterChange(searchFilterText)
+    }, [searchFilterText]);
+
+    return (
+        <div>
+            <input
+                id="searchBar"
+                className="css-input"
+                value={searchFilterText}
+                type="text"
+                onChange={(event) => {
+                    setSearchFilterText(event.target.value)
+                }}
+            />
+            <br/>
+            <button
+                className="coolButton"
+                onClick={() => {
+                    setSearchFilterText(searchFilterText)
+                }}
+            >
+                Search
+            </button>
+            <button
+                className="coolButton"
+                onClick={() => {
+                    setSearchFilterText("")
+                }}
+            >
+                Clear
+            </button>
+            <br/>
+            <br/>
+        </div>
+    );
 }
 
 export default Search;

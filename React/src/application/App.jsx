@@ -3,94 +3,66 @@ import Search from "./search/Search";
 import Radio from "./radio/Radio";
 import Task from "./task/Task";
 import AddingButton from "./adding/AddingButton";
-import {
-  fetchTasks,
-  removeTask,
-  updateTask,
-  createTask,
-} from "./core/TaskService";
-import { useEffect, useState } from "react";
-
-function check(task) {
-  task.completed = !task.completed;
-  updateTask(task);
-
-  window.location.reload(false); // hacky way to reload
-}
-
-function remove(task) {
-  removeTask(task.id);
-  window.location.reload(false); // hacky way to reload
-}
+import {createTask, fetchTasks,} from "./core/TaskService";
+import {useEffect, useState} from "react";
 
 function addNewTask() {
-  createTask();
-  window.location.reload(false); // hacky way to reload
+    createTask();
+    window.location.reload(false); // hacky way to reload
 }
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [filterText, setFilterText] = useState("");
+    const [doCall, setDoCall] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [selectedOption, setSelectedOption] = useState("");
+    const [filterText, setFilterText] = useState("");
 
-  async function refresh(filterText, selectedOption) {
-    console.log("parent: refresh");
-    let result = await fetchTasks(filterText, selectedOption);
-    setTasks(result);
-  }
+    async function refresh() {
+        let result = await fetchTasks(filterText, selectedOption);
+        console.log(`refresh ${filterText},${selectedOption}`, result)
+        setTasks(result);
+        setDoCall(false)
+    }
 
-  async function updateSpecificTask(index, newMessage) {
-    console.log("parent making change");
-    tasks[index].message = newMessage;
-    setTasks(tasks);
-    refresh(filterText, selectedOption);
-  }
+    useEffect(() => {
+        console.log("repreeat")
+        if (doCall) {
+            refresh()
+        }
+    }, [selectedOption, filterText, doCall]);
 
-  function clear() {
-    console.log("clear text");
-    setFilterText("");
-    // window.location.reload(false); // hacky way to reload
-  }
+    return (
+        <div>
+            <Radio
+                selectedOption={selectedOption}
+                callbackSelectedOption={(text) => {
+                    setSelectedOption(text);
+                    setDoCall(true)
+                }}
+            ></Radio>
 
-  useEffect(() => {
-    refresh(filterText, selectedOption);
-  }, []);
+            {/* search button */}
+            <Search
+                filterText={filterText}
+                onFilterChange={(value) => {
+                    setFilterText(value);
+                    setDoCall(true)
+                }}
+                callbackSearch={(event) => {
+                    setDoCall(true)
+                }}
+            ></Search>
 
-  return (
-    <div>
-      <Radio
-        selectedOption={selectedOption}
-        handleChange={(event) => {
-          setSelectedOption(event.target.value);
-          refresh(filterText, event.target.value);
-        }}
-      ></Radio>
+            <Task
+                tasks={tasks}
+                callbackUpdateParentTasks={() => {
+                    setDoCall(true)
+                }}
+            ></Task>
 
-      {/* search button */}
-      <Search
-        filterText={filterText}
-        onFilterChange={(event) => {
-          setFilterText(event.target.value);
-          refresh(event.target.value, selectedOption);
-        }}
-        callbackSearch={(event) => {
-          refresh(filterText, selectedOption);
-        }}
-        callbackClear={(event) => {
-          clear();
-        }}
-      ></Search>
-
-      <Task
-        tasks={tasks}
-        callback={updateSpecificTask}
-        callbackRemove={remove}
-        callbackCheck={check}
-      ></Task>
-
-      <AddingButton callbackAddTask={addNewTask}></AddingButton>
-    </div>
-  );
+            <AddingButton callbackAddTask={addNewTask}></AddingButton>
+        </div>
+    );
 }
 
 export default App;
