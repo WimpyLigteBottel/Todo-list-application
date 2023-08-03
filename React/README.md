@@ -2,69 +2,77 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+# Interesting notes about when i was developing this app in react
 
-In the project directory, you can run:
+### 1. I had to learn about the useState + useEffect. 
 
-### `npm start`
+Not sure if this is the correct* thing but in my mind its as follows
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```javascript
+    const [searchFilterText, setSearchFilterText] = useState(""); // instiatiates the variable
+    //searchFilterText <<< is get current state
+    //setSearchFilterText <<< is the "async*****" set state call
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+    //This is the hook that will be called bsed on the [dependencies...] your are SPECIFICLY listening too
+    // to re-render your compontent
+    useEffect(() => {
+        //This will do a callback based on the property passed in somewhere
+        props.onFilterChange(searchFilterText)
+    }, [searchFilterText]);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    // THIS IS ASYNC LIKE SET AND YOU ONLY GET THE MOST UPDATE `searchFilterText` ONCE USEEFFECT RAN!
+    setSearchFilterText("THIS IS SET") 
+```
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Components feels great the smaller they are!
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+I did find it made development slightly easier and did not have to worry about BIG complex pages. It 
+also forced me to try and make the code simple.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 3. 1000+ time re render in useEffect
 
-### `npm run eject`
+I found that there was interesting case where i had "recursive update" where if i was listening to a 
+certain state and i update it setXXXXX it would call the useEffect again.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Example in the `fetchTasks(filterText, selectedOption)` method i get the response then do `setTasks(response)`
+which is all good but then, if i was also listening to the `tasks` use state in useEffect it could do recursive* render
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. render
+2. do refresh (fetch task)
+3. set the task
+4. GO TO STEP 1
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To prevent this i did 2 things. have simple boolean `doCall` that i would set to false and only do the fetch call if 
+it is true then afterwards i will set it to false. This prevent 1000's rerender calls but does cause bit of ugly code
+maybe this could be done better but this is my first stab.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```javascript
 
-## Learn More
+const [doCall, setDoCall] = useState(false);
+const [tasks, setTasks] = useState([]);
+const [selectedOption, setSelectedOption] = useState("");
+const [filterText, setFilterText] = useState("");
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+useEffect(() => {
+    if (!doCall) {
+        return
+    }
+    fetchTasks(filterText, selectedOption)
+        .then((response => {
+            setTasks(response);
+            setDoCall(false)
+        }));
+}, [selectedOption, filterText, doCall]);
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+### 4. Experience working with react after WEEKS AWAY 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+After a while away of coding in react month plus. (Note: I dont do any frontend work at my current workplace).
+I did struggle a bit of rerending my compontents and why it was not working. Overall the callbacks and passing properties in
+made a lot of sense and was easy to pick up again.
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+so i would say `useEffect` + `useState` might need bit of fundemental understanding when doing development work
+but otherwise it was pretty great!
