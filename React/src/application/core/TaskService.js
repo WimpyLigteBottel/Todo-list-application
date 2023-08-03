@@ -23,7 +23,7 @@ export async function fetchTasks(filterText, isCompleted) {
   }
 
   let data = axios
-    .get(`${baseUrl}/v1/task?message=${filterText}&completed=${isCompleted}`)
+    .get(`${baseUrl}/v1/task?message=${encodeURIComponent(filterText)}&completed=${encodeURIComponent(isCompleted)}`)
     .then((response) => {
       return response.data;
     })
