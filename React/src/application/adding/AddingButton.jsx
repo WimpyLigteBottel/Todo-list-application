@@ -1,17 +1,33 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./AddingButton.css";
 
+import {createTask} from "../core/TaskService";
+
 function AddingButton(props) {
-  return (
-    <div>
-      <button
-        className="coolButton coolButton-green"
-        onClick={() => props.callbackAddTask()}
-      >
-        Add
-      </button>
-    </div>
-  );
+    const [doCallBack, setDoCallBack] = useState(false);
+
+    useEffect(() => {
+        if (!doCallBack) {
+            return
+        }
+        props.callbackAddTask()
+        setDoCallBack(false)
+    }, [doCallBack])
+
+
+    return (
+        <div>
+            <button
+                className="coolButton coolButton-green"
+                onClick={() => {
+                    createTask()
+                    setDoCallBack(true)
+                }}
+            >
+                Add
+            </button>
+        </div>
+    );
 }
 
 export default AddingButton;

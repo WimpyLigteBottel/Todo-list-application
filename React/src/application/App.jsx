@@ -3,13 +3,8 @@ import Search from "./search/Search";
 import Radio from "./radio/Radio";
 import Task from "./task/Task";
 import AddingButton from "./adding/AddingButton";
-import {createTask, fetchTasks,} from "./core/TaskService";
+import {fetchTasks,} from "./core/TaskService";
 import {useEffect, useState} from "react";
-
-function addNewTask() {
-    createTask();
-    window.location.reload(false); // hacky way to reload
-}
 
 function App() {
     const [doCall, setDoCall] = useState(false);
@@ -17,18 +12,15 @@ function App() {
     const [selectedOption, setSelectedOption] = useState("");
     const [filterText, setFilterText] = useState("");
 
-    async function refresh() {
-        let result = await fetchTasks(filterText, selectedOption);
-        console.log(`refresh ${filterText},${selectedOption}`, result)
-        setTasks(result);
-        setDoCall(false)
-    }
-
     useEffect(() => {
-        console.log("repreeat")
-        if (doCall) {
-            refresh()
+        if (!doCall) {
+            return
         }
+        fetchTasks(filterText, selectedOption)
+            .then((response => {
+                setTasks(response);
+                setDoCall(false)
+            }));
     }, [selectedOption, filterText, doCall]);
 
     return (
@@ -36,31 +28,27 @@ function App() {
             <Radio
                 selectedOption={selectedOption}
                 callbackSelectedOption={(text) => {
-                    setSelectedOption(text);
+                    setSelectedOption(text)
                     setDoCall(true)
                 }}
-            ></Radio>
+            />
 
             {/* search button */}
             <Search
                 filterText={filterText}
                 onFilterChange={(value) => {
-                    setFilterText(value);
+                    setFilterText(value)
                     setDoCall(true)
                 }}
-                callbackSearch={(event) => {
-                    setDoCall(true)
-                }}
-            ></Search>
+                callbackSearch={() => setDoCall(true)}
+            />
 
             <Task
                 tasks={tasks}
-                callbackUpdateParentTasks={() => {
-                    setDoCall(true)
-                }}
-            ></Task>
+                callbackUpdateParentTasks={() => setDoCall(true)}
+            />
 
-            <AddingButton callbackAddTask={addNewTask}></AddingButton>
+            <AddingButton callbackAddTask={() => setDoCall(true)}/>
         </div>
     );
 }
