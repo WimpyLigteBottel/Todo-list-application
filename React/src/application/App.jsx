@@ -14,7 +14,7 @@ function App() {
   const [filterText, setFilterText] = useState("");
 
   axios
-    .get("http://localhost:3000/hello")
+    .get("https://master--resplendent-dodol-4300eb.netlify.app/api/hello")
     .then((response) => {
       console.log(response.data, "TESTING");
       return response.data;
